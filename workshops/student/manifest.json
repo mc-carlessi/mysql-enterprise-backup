@@ -18,7 +18,7 @@
         {
             "title": "Lab 2: Verify MySQL Enterprise Edition",
             "description": "Verify MySQL Enterprise Edition",
-            "filename": "../../verify-ee/verify-ee.md"
+            "filename": "../../useful-commands/useful-commands.md"
         },
         {
             "title": "Lab 3: Logical Backup and Restore with mysql dump",
