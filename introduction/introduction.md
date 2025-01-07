@@ -33,7 +33,7 @@ You may now **proceed to the next lab**
 ## Learn More
 
 - [MySQL Home Page](https://www.mysql.com/)
-- [mysqldump](https://dev.mysql.com/doc/refman/8.4/en/mysqldump.html)
+- [mysqldump utility](https://dev.mysql.com/doc/refman/8.4/en/mysqldump.html)
 - [MySQL Shell dump & load](https://dev.mysql.com/doc/mysql-shell/8.4/en/mysql-shell-utilities-dump-instance-schema.html)
 - [MySQL Enterprise Backup](https://dev.mysql.com/doc/mysql-enterprise-backup/8.4/en/)
 - [MySQL Point in Time Recovery](https://dev.mysql.com/doc/refman/8.4/en/point-in-time-recovery.html)

@@ -1,4 +1,4 @@
-# INSTALL - VERIFY MYSQL ENTERPRISE EDITION  
+# INSTALL - MYSQL USEFUL COMMANDS  
 
 ## Introduction
 
@@ -35,7 +35,7 @@ Pay attention to the prompt, to know where execute the commands
 * ![#ff9933](https://via.placeholder.com/15/ff9933/000000?text=+) mysqlsh>  
   The command must be executed in MySQL shell
 
-1. If not already connected, connect to mysql1 server through app-srv
+1. If not already connected, connect to your mysql server
 
     ```
     <span style="color:green">shell-app-srv$</span> <copy>ssh -i $HOME/sshkeys/id_rsa_mysql1 opc@mysql1</copy>

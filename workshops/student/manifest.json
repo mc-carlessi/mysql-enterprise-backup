@@ -1,5 +1,5 @@
 {
-    "workshoptitle": "MySQL Enterprise Edition - Security Workshop - Student",
+    "workshoptitle": "MySQL Enterprise Edition - Backup Workshop - Student",
     "include": {"starter-file.sql":"../../data-load/files/starter-file.sql",
                 "sample.json":"../../data-load/files/sample.json",
                 "step2.md":"../../data-load/files/step2.md"},
@@ -16,7 +16,7 @@
             "filename": "../../install-ee/install-ee.md"
         },
         {
-            "title": "Lab 2: Verify MySQL Enterprise Edition",
+            "title": "Lab 2: MySQL useful commands",
             "description": "Verify MySQL Enterprise Edition",
             "filename": "../../useful-commands/useful-commands.md"
         },
