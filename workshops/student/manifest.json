@@ -16,9 +16,9 @@
             "filename": "../../install-ee/install-ee.md"
         },
         {
-            "title": "Lab 2: MySQL useful commands",
-            "description": "Verify MySQL Enterprise Edition",
-            "filename": "../../useful-commands/useful-commands.md"
+            "title": "Lab 2: MySQL Shell and mysql_config_editor",
+            "description": "MySQL Shell client",
+            "filename": "../../mysql-shell/mysql-shell.md"
         },
         {
             "title": "Lab 3: Logical Backup and Restore with mysql dump",

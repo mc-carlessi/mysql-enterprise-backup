@@ -1,9 +1,7 @@
 # MySQL Logical Backup
 
 ## Introduction
-MySQL Shell is an advanced client and code editor for MySQL. In addition to the provided SQL functionality, similar to mysql, MySQL Shell provides scripting capabilities for JavaScript and Python and includes APIs for working with MySQL.
-
-MySQL Shell's includes
+MySQL Shell's can be used to efficiently create a logical export of the instance
 - instance dump utility util.dumpInstance(), to export the full instance content
 - schema dump utility util.dumpSchemas(), to export all schemas or a selected schema
 - table dump utility util.dumpTables(), to export a selection of tables or views from a schema
@@ -20,83 +18,137 @@ In this lab, you will:
 * Introduction to MySQL Shell
 * execute a backup with MySQL Shell dump utility
 * execute a schema restore with MySQL Shell load utility 
-* execute similar commands with mysqldump and compare results
+* compare execution time between mysqldump and MySQL Shell
 
-> **Note:**
- * Server: mysql1
+### Prerequisites
+
+This lab assumes you have:
+
+- All previous labs successfully completed
+
+### Lab standard
+
+Pay attention to the prompt, to know where execute the commands 
+* ![green-dot](./images/green-square.jpg) shell>  
+  The command must be executed in the Operating System shell
+* ![orange-dot](./images/orange-square.jpg) mysql>  
+  The command is SQL and must be executed in a client like MySQL, MySQL Shell or similar tool
+* ![yellow-dot](./images/yellow-square.jpg) mysqlsh>  
+  The command must be executed in MySQL shell javascript command mode
 
 
 
 ## Task 1: MySQL Shell overview
 
-If not already connected to app-srv and mysql1 then do the following
-- a. Connect with your SSH client using the public IP and the provided ssh Example of connections from Linux, MAC, Windows Powershell
+1. If not already connected, connect to your mysql server
 
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy> ssh -i id_rsa_app-srv opc@<public_ip></copy>
+    <copy>ssh -i $HOME/sshkeys/id_rsa_mysql1 opc@<your_server_public_ip></copy>
     ```
    
-2. Connect with MySQL Shell
+2. Connect with MySQL Shell to your instance
+
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>mysqlsh admin@mysql1:3307</copy>
+    <copy>mysqlsh admin@localhost</copy>
     ```
 
 ## Task 2: MySQL Shell dump utility
-3. Export teh full instance using javascript command mode.  
-    Please **note the time required** with the default 4 threads.
+1. Switch to javascript command mode to check the export of the full instance.  
+    To just check if export parameters are correct, we can execute it in dry-run
+
+    **![orange-dot](./images/orange-square.jpg) mysqlsh>**  
     ```
-    <span style="color:blue">My</span><span style="color: orange">SQL </span><span style="background-color:orange">SQL</span>><copy>\js</copy>
-    ```
-    ```
-    <span style="color:blue">My</span><span style="color: orange">SQL </span><span style="background-color:yellow">JS</span>><copy>util.dumpSchemas(['employees'],'/mysql/exports/employees')</copy>
+    <copy>\js</copy>
     ```
 
-4. Export a specific schema (employees)  
+    **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
+    ```
+    <copy>util.dumpSchemas(['employees'],'/mysql/exports/employees',{dryRun:true})</copy>
+    ```
+2. If there are no errors, execute the export without dryRun.  
     Please **note the time required** with the default 4 threads.
+
+    **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
-    <span style="color:blue">My</span><span style="color: orange">SQL </span><span style="background-color:orange">SQL</span>><copy>\js</copy>
-    ```
-    ```
-    <span style="color:blue">My</span><span style="color: orange">SQL </span><span style="background-color:yellow">JS</span>><copy>util.dumpSchemas(['employees'],'/mysql/exports/employees')</copy>
+    <copy>util.dumpSchemas(['employees'],'/mysql/exports/employees')</copy>
     ```
 
-4. Check the content of the directory /mysql/exports/employees
+3. Export a specific schema (employees)  
+    Please **note the time required** with the default 4 threads.
+
+    **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
-    <span style="color:blue">My</span><span style="color: orange">SQL </span><span style="background-color:yellow">JS</span>><copy>\q</copy>
+    <copy>util.dumpSchemas(['employees'],'/mysql/exports/employees')</copy>
     ```
+
+5. Check the content of the directory /mysql/exports/employees
+
+    **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
-    <span style="color:green">shell></span> <copy>ls -l /mysql/exports/employees</copy>
+    <copy>\q</copy>
+    ```
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>ls -l /mysql/exports/employees</copy>
     ```
 
 5. Reconnect mysqlsh and drop employees database
+
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>mysqlsh admin@mysql1:3307</copy>
-    ```
-    ```
-    <span style="color:blue">My</span><span style="color: orange">SQL </span><span style="background-color:orange">SQL</span>><copy> drop database employees;</copy>
-    ```
-    ```
-    <span style="color:blue">My</span><span style="color: orange">SQL </span><span style="background-color:orange">SQL</span>><copy> show databases;</copy>
+    <copy>mysqlsh admin@localhost</copy>
     ```
 
-6. Load files is disabled by default, so enable it now to let MysQL Shell execute the load
+    **![orange-dot](./images/orange-square.jpg) mysql>**  
     ```
-    <span style="color:blue">My</span><span style="color: orange">SQL </span><span style="background-color:orange">SQL</span>><copy> set persist local_infile=ON;</copy>
+    <copy>DROP DATABASE employees;</copy>
     ```
 
-6. Switch now in javascript command mode and re import the employees database.  
+    **![orange-dot](./images/orange-square.jpg) mysql>**  
+    ```
+    <copy>SHOW DATABASES;</copy>
+    ```
+
+6. To load files, MySQL Shell requires local_infile variable enable (for security reasons is disabled by defautl)
+
+    **![orange-dot](./images/orange-square.jpg) mysql>**  
+    ```
+    <copy>SET PERSIST local_infile=ON;</copy>
+    ```
+
+7. Switch to javascript command mode and test if parameters are correct using dryRun mode
+
+    **![orange-dot](./images/orange-square.jpg) mysql>**  
+    ```
+    <copy> \js</copy>
+    ```
+
+    **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
+    ```
+    <copy>util.loadDump('/mysql/exports/employees',{dryRun:true})</copy>
+    ```
+
+6. If there are no errors, load the employees database.  
     Please **note the time required** with the default 4 threads.
+
+    **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
-    <span style="color:blue">My</span><span style="color: orange">SQL </span><span style="background-color:orange">SQL</span>><copy> \js</copy>
+    <copy>util.loadDump('/mysql/exports/employees')</copy>
     ```
+
+7. Check that the database employees is imported. It's interesting to note that the ***"<code>\sql</code>"*** prefix let us execute SQL statements without swith to SQL mode
+
+    **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
-    <span style="color:blue">My</span><span style="color: orange">SQL </span><span style="background-color:yellow">JS</span>><copy>util.loadDump('/mysql/exports/employees')</copy>
+    <copy>\sql SHOW DATABASES;</copy>
     ```
+
+    **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
-    <span style="color:blue">My</span><span style="color: orange">SQL </span><span style="background-color:yellow">JS</span>><copy>\sql show databases;</copy>
-    ```
-    ```
-    <span style="color:blue">My</span><span style="color: orange">SQL </span><span style="background-color:yellow">JS</span>><copy>\q</copy>
+    <copy>\q</copy>
     ```
 
 7. We can also calculate the time with mysqldump. To use mysqldump in a more secure way we store the credential in login-path file (discussed in the module dedicated to security)

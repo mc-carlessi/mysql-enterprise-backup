@@ -9,94 +9,186 @@ Estimated Lab Time: 15 minutes
 
 ### Objectives
 In this lab, you will:
-* execute a backup with mysqldump 
-* execute a schema restore from a backup created with mysqldump 
+* execute backups with mysqldump 
+* execute restore from a backup created with mysqldump 
 
+### Prerequisites
 
-> **Note:**
- * Server: mysql1
+This lab assumes you have:
+
+- All previous labs successfully completed
+
+### Lab standard
+
+Pay attention to the prompt, to know where execute the commands 
+* ![green-dot](./images/green-square.jpg) shell>  
+  The command must be executed in the Operating System shell
+* ![orange-dot](./images/orange-square.jpg) mysql>  
+  The command is SQL and must be executed in a client like MySQL, MySQL Shell or similar tool
+* ![yellow-dot](./images/yellow-square.jpg) mysqlsh>  
+  The command must be executed in MySQL shell javascript command mode
+
 
 ## Task 1: mysqldump - backup
 
-If not already connected to app-srv and mysql1 then do the following
-- a. Connect with your SSH client using the public IP and the provided ssh Example of connections from Linux, MAC, Windows Powershell
+1. If not already connected, connect to your mysql server
 
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy> ssh -i id_rsa_app-srv opc@<public_ip></copy>
-    ```
-- b. Connect to <span style="color:green">shell-mysql1</span>
-    ```
-    <span style="color:green">shell-app-srv$</span> <copy> ssh -i $HOME/sshkeys/id_rsa_mysql1 opc@mysql1 </copy>
+    <copy>ssh -i $HOME/sshkeys/id_rsa_mysql1 opc@<your_server_public_ip></copy>
     ```
 
-1. Create the export folder
+2. Create the export folder
+
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>sudo mkdir -p /mysql/exports</copy>
-    ```
-    ```
-    <span style="color:green">shell></span> <copy>sudo chown mysqluser:mysqlgrp /mysql/exports/</copy>
-    ```
-    ```
-    <span style="color:green">shell></span> <copy>sudo chmod 770 /mysql/exports/</copy>
+    <copy>mkdir -p /home/opc/exports</copy>
     ```
 
-2. Export all the data with mysqldump
+3. Export all the data with mysqldump. We use here the ***login_path*** to authenticate, easier than specify ***<code>"-u <user> -h <host> -p"</code>***
+
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>mysqldump -uadmin -p -hmysql1 -P3307 --single-transaction --events --routines --flush-logs --all-databases > /mysql/exports/full.sql</copy>
+    <copy>mysqldump --login-path=local_admin --single-transaction --events --routines --flush-logs --all-databases > /home/opc/exports/full.sql</copy>
     ```
 
-3. View  the content of the file /mysql/exports/full.
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>nano /mysql/exports/full.sql</copy>
+    <copy>ls -l /mysql/exports/full.sql</copy>
+    ```
+
+3. View the content of the file full.sql. 
+   Please note that "database:" in third line is empty, and first database exported is "mysql" 
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>nano /mysql/exports/full.sql</copy>
+    ```
+
+    ```sql
+    -- MySQL dump 10.13  Distrib 8.4.3, for Win64 (x86_64)
+    --
+    -- Host: localhost    Database: 
+    -- ------------------------------------------------------
+    -- Server version	8.4.3-commercial
+
+    /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+    /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+    /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+    /*!50503 SET NAMES utf8mb4 */;
+    /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+    /*!40103 SET TIME_ZONE='+00:00' */;
+    /*!50606 SET @OLD_INNODB_STATS_AUTO_RECALC=@@INNODB_STATS_AUTO_RECALC */;
+    /*!50606 SET GLOBAL INNODB_STATS_AUTO_RECALC=OFF */;
+    /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+    /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+    /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+    /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+    --
+    -- Current Database: `mysql`
+    --
+
+    CREATE DATABASE /*!32312 IF NOT EXISTS*/ `mysql` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
     ```
 
 4. Export a specific database (employees)
 
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>mysqldump -uadmin -p -hmysql1 -P3307 --single-transaction --set-gtid-purged=OFF --databases employees > /mysql/exports/employees.sql</copy>
-    ```
-    ```
-    <span style="color:green">shell></span> <copy>ls -l /mysql/exports/employees.sql</copy>
+    <copy>mysqldump --login-path=local_admin --single-transaction --set-gtid-purged=OFF --databases employees > /home/opc/employees_only.sql</copy>
     ```
 
-5. Verify the files created
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>ls -l /mysql/exports/employees_only.sql</copy>
+    ```
 
-6. Check the file content
+5. View  the content of the file employees.sql.
+   Please note that "database:" in third line is "employees" 
 
-## Task 2: mysqldump - restore
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>nano /mysql/exports/full.sql</copy>
+    ```
+
+    ```sql
+    -- MySQL dump 10.13  Distrib 8.4.3, for Win64 (x86_64)
+    --
+    -- Host: localhost    Database: employees
+    -- ------------------------------------------------------
+    -- Server version	8.4.3-commercial
+
+    /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+    /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+    /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+    /*!50503 SET NAMES utf8mb4 */;
+    /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+    /*!40103 SET TIME_ZONE='+00:00' */;
+    /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+    /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+    /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+    /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+    --
+    -- Current Database: `employees`
+    --
+
+    CREATE DATABASE /*!32312 IF NOT EXISTS*/ `employees` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+    ```
+
+## Task 2: mysqldump restore 
 
 1. Drop employees database, using the mysql client
+
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>mysql -uadmin -p -hmysql1 -P3307</copy>
+    <copy>mysql --login-path=local_admin</copy>
     ```
+
+    **![orange-dot](./images/orange-square.jpg) mysql>**
     ```
-    <span style="color:blue">mysql></span> <copy>show databases;</copy>
+    <copy>SHOW DATABASES;</copy>
     ```
+
+    **![orange-dot](./images/orange-square.jpg) mysql>**
     ```
-    <span style="color:blue">mysql></span> <copy>DROP DATABASE employees;</copy>
+    <copy>DROP DATABASE employees;</copy>
     ```
+
+    **![orange-dot](./images/orange-square.jpg) mysql>**
     ```
-    <span style="color:blue">mysql></span> <copy>show databases;</copy>
+    <copy>SHOW DATABASES;</copy>
     ```
 
 2. Import the dropped employees database.
-    It can be done in shell (as when we loaded first example data) or from within the mysql client.
+
+    **![orange-dot](./images/orange-square.jpg) mysql>**
     ```
-    <span style="color:blue">mysql></span> <copy>SOURCE /mysql/exports/employees.sql</copy>
-    ```
-    ```
-    <span style="color:blue">mysql></span> <copy>show databases;</copy>
-    ```
-    ```
-    <span style="color:blue">mysql></span> <copy>show tables in employees;</copy>
+    <copy>SOURCE /home/opc/employees.sql</copy>
     ```
 
 3. Check that content is restored
+    **![orange-dot](./images/orange-square.jpg) mysql>**
+    ```
+    <copy>SHOW DATABASES;</copy>
+    ```
+
+    **![orange-dot](./images/orange-square.jpg) mysql>**
+    ```
+    <copy>SHOW TABLES IN employees;</copy>
+    ```
+
+    **![orange-dot](./images/orange-square.jpg) mysql>**
+    ```
+    <copy>SELECT * FROM employees.employees limit 10;</copy>
+    ```
 
 7. Exit from mysql client
 
+    **![orange-dot](./images/orange-square.jpg) mysql>**
     ```
-    <span style="color:blue">mysql></span> <copy>exit</copy>
+    <copy>exit</copy>
     ```
     
 ## Learn More
