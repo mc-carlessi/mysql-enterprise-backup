@@ -44,19 +44,19 @@ Pay attention to the prompt, to know where execute the commands
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>ssh -i $HOME/sshkeys/id_rsa_mysql1 opc@<your_server_public_ip></copy>
+    <copy>ssh -i $HOME/sshkeys/id_rsa opc@<your_server_public_ip></copy>
     ```
    
 2. Connect with MySQL Shell to your instance
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>mysqlsh admin@localhost</copy>
+    <copy>mysqlsh admin@127.0.0.1</copy>
     ```
 
-## Task 2: MySQL Shell dump utility
-1. Switch to javascript command mode to check the export of the full instance.  
-    To just check if export parameters are correct, we can execute it in dry-run
+## Task 2: MySQL Shell dump
+1. Switch to javascript command mode to check the export the employee database.  
+    To ***just check*** if export parameters are correct, without execute the export, we can execute the command in dry-run mode
 
     **![orange-dot](./images/orange-square.jpg) mysqlsh>**  
     ```
@@ -65,25 +65,16 @@ Pay attention to the prompt, to know where execute the commands
 
     **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
-    <copy>util.dumpSchemas(['employees'],'/mysql/exports/employees',{dryRun:true})</copy>
+    <copy>util.dumpSchemas(['employees'],'/home/opc/exports/employees',{dryRun:true})</copy>
     ```
 2. If there are no errors, execute the export without dryRun.  
-    Please **note the time required** with the default 4 threads.
 
     **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
-    <copy>util.dumpSchemas(['employees'],'/mysql/exports/employees')</copy>
+    <copy>util.dumpSchemas(['employees'],'/home/opc/exports/employees')</copy>
     ```
 
-3. Export a specific schema (employees)  
-    Please **note the time required** with the default 4 threads.
-
-    **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
-    ```
-    <copy>util.dumpSchemas(['employees'],'/mysql/exports/employees')</copy>
-    ```
-
-5. Check the content of the directory /mysql/exports/employees
+3. Check the content of the directory /home/opc/exports/employees
 
     **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
@@ -92,14 +83,16 @@ Pay attention to the prompt, to know where execute the commands
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>ls -l /mysql/exports/employees</copy>
+    <copy>ls -l /home/opc/exports/employees</copy>
     ```
 
-5. Reconnect mysqlsh and drop employees database
+## Task 3: MySQL Shell load
+
+1. Reconnect mysqlsh and drop employees database
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>mysqlsh admin@localhost</copy>
+    <copy>mysqlsh admin@127.0.0.1</copy>
     ```
 
     **![orange-dot](./images/orange-square.jpg) mysql>**  
@@ -112,14 +105,14 @@ Pay attention to the prompt, to know where execute the commands
     <copy>SHOW DATABASES;</copy>
     ```
 
-6. To load files, MySQL Shell requires local_infile variable enable (for security reasons is disabled by defautl)
+2. To load files, MySQL Shell requires local_infile variable enable (for security reasons is disabled by defautl)
 
     **![orange-dot](./images/orange-square.jpg) mysql>**  
     ```
     <copy>SET PERSIST local_infile=ON;</copy>
     ```
 
-7. Switch to javascript command mode and test if parameters are correct using dryRun mode
+3. Switch to javascript command mode and test if parameters are correct using dryRun mode
 
     **![orange-dot](./images/orange-square.jpg) mysql>**  
     ```
@@ -128,18 +121,17 @@ Pay attention to the prompt, to know where execute the commands
 
     **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
-    <copy>util.loadDump('/mysql/exports/employees',{dryRun:true})</copy>
+    <copy>util.loadDump('/home/opc/exports/employees',{dryRun:true})</copy>
     ```
 
-6. If there are no errors, load the employees database.  
-    Please **note the time required** with the default 4 threads.
+4. If there are no errors, load the employees database.  
 
     **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
-    <copy>util.loadDump('/mysql/exports/employees')</copy>
+    <copy>util.loadDump('/home/opc/exports/employees')</copy>
     ```
 
-7. Check that the database employees is imported. It's interesting to note that the ***"<code>\sql</code>"*** prefix let us execute SQL statements without swith to SQL mode
+5. Check that the database employees is imported. It's interesting to note that the ***"<code>\sql</code>"*** prefix let us execute SQL statements without swith to SQL mode
 
     **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
@@ -151,50 +143,84 @@ Pay attention to the prompt, to know where execute the commands
     <copy>\q</copy>
     ```
 
-7. We can also calculate the time with mysqldump. To use mysqldump in a more secure way we store the credential in login-path file (discussed in the module dedicated to security)
-    * Let's create the login-path
+## Task 4: MySQL Shell command line and comparison to mysqldump
+
+1. MySQL Shell can be executed also at command line (useful for scripting) with "<code>mysqlsh [options] -- shell_object
+object_method [method_arguments]</code>"
+
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>mysql_config_editor set --login-path=mysql1 --host=mysql1 --port=3307 --user=admin --password</copy>
-    ```
-    * Let's test the login-path
-    ```
-    <span style="color:green">shell></span> <copy>mysql --login-path=mysql1 -e "SHOW DATABASES"</copy>
+    <copy>mysqlsh admin@127.0.0.1 -- util dumpSchemas --help</copy>
     ```
 
-8. Now we can test the export.  
-    Please **compare the mysqldump time** with the MysQL Shell dump.
+2. We can execute the dump and note the "Total duration" time
+
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>time mysqldump --login-path=mysql1 --single-transaction --set-gtid-purged=OFF --databases employees > /mysql/exports/employees_time_test.sql</copy>
+    <copy>mysqlsh admin@127.0.0.1 -- util dumpSchemas "['employees']" --outputUrl='/home/opc/exports/employees_shell_time'</copy>
     ```
 
-9. And now drop the database employees.  
+3. We can also calculate the time with mysqldump using the <code>time</code> utility provided by linux, that tell us how much time is required to execute a specific command, and compare with previous timing
+
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>mysql --login-path=mysql1 -e "drop database employees"</copy>
-    ```
-    ```
-    <span style="color:green">shell></span> <copy>mysql --login-path=mysql1 -e "show databases"</copy>
+    <copy>time mysqldump --login-path=local_admin --single-transaction --set-gtid-purged=OFF --databases employees > /home/opc/exports/employees_mysqldump_time.sql</copy>
     ```
 
-10. And we can check the import time.  
+4. We compare now the import timing. First drop the employees database  
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>mysqlsh admin@127.0.0.1 -e "DROP DATABASE employees"</copy>
+    ```
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>mysqlsh admin@127.0.0.1 --table -e "SHOW DATABASES"</copy>
+    ```
+
+5. Let's now compare execution time of the import. We start with MySQL Shell load and note the "Total duration" time
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>mysqlsh admin@localhost -- util loadDump '/home/opc/exports/employees_shell_time'</copy>
+    ```
+
+6. Drop the employees database  
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>mysqlsh admin@127.0.0.1 -e "DROP DATABASE employees"</copy>
+    ```
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>mysqlsh admin@127.0.0.1 --table -e "SHOW DATABASES"</copy>
+    ```
+
+7. Execute mysql import from mysqldump.  
     Please **compare the mysql import time** with the MysQL load.
 
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:blue">mysql></span> <copy>time mysql --login-path=mysql1 < /mysql/exports/employees_time_test.sql</copy>
-    ```
-    ```
-    <span style="color:green">shell></span> <copy>mysql --login-path=mysql1 -e "show databases"</copy>
+    <copy>time mysql --login-path=local_admin < /home/opc/exports/employees_mysqldump_time.sql</copy>
     ```
 
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>mysql --login-path=local_admin -e "show databases"</copy>
+    ```
 
+You may now **proceed to the next lab**
 
 ## Learn More
-* https://dev.mysql.com/doc/refman/8.0/en/mysqldump.html
-* To use MySQL Shell at command line read: https://dev.mysql.com/doc/mysql-shell/8.0/en/command-line-integration-overview.html
-* https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-utilities-dump-instance-schema.html
-* https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-utilities-load-dump.html
+* [mysqldump manual page](https://dev.mysql.com/doc/refman/8.0/en/mysqldump.html)
+* [MySQL Shell dump utilities](https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-utilities-dump-instance-schema.html)
+* [MySQL Shell load utility](https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-utilities-load-dump.html)
+* [MySQL Shell at command line](https://dev.mysql.com/doc/mysql-shell/8.0/en/command-line-integration-overview.html)
 
 
 ## Acknowledgements
+
 * **Author** - Marco Carlessi, Principal Sales Consultant
-* **Contributors** -  Perside Foster, MySQL Solution Engineering, Selena Sánchez, MySQL Solutions Engineer
-* **Last Updated By/Date** - Selena Sánchez, MySQL Solution Engineering, May 2023
+* **Last Updated By/Date** - Marco Carlessi, MySQL Solution Engineering, January 2025

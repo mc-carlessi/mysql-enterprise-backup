@@ -1,144 +1,209 @@
-# MySQL Enterprise Backup
+# MYSQL ENTERPRISE BACKUP
 
 ## Introduction
+
+MySQL Enterprise Backup is a backup utility for MySQL server. It is a multi-platform, high-performance tool, offering rich features like “hot” (online) backup, incremental and differential backup, selective backup and restore, support for direct cloud storage backup, backup encryption and compression, and many other valuable features.
+
+**Note:** MySQL Enterprise Backup is available as part of MySQL Enterprise Edition distributions.
+
 
 Estimated Lab Time: 15 minutes
 
 ### Objectives
 In this lab, you will:
-* We work now with <span style="color:red">mysql-advanced</span> instance
+* Execute a backup with MySQL Enterprise Backup
+* Execute a restore with MySQL Enterprise Backup
 
-> **Note:**
- * Server: mysql1
+### Prerequisites
+
+This lab assumes you have:
+- All previous labs successfully completed
+
+### Lab standard
+
+Pay attention to the prompt, to know where execute the commands 
+* ![green-dot](./images/green-square.jpg) shell>  
+  The command must be executed in the Operating System shell
+* ![orange-dot](./images/orange-square.jpg) mysql>  
+  The command is SQL and must be executed in a client like MySQL, MySQL Shell or similar tool
+* ![yellow-dot](./images/yellow-square.jpg) mysqlsh>  
+  The command must be executed in MySQL shell javascript command mode
 
 ## Task 1: Create a backup
 
-1. MySQL Enterprise Backup is now available inside MySQL Enterprise Distributions like a tool, so you don’t have to install it.
+1. If not already connected, connect to your mysql server
 
-2. Create directories to store backups
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>sudo mkdir -p /backupdir/full</copy>
-    ```
-    ```
-    <span style="color:green">shell></span> <copy>sudo mkdir /backupdir/compressed</copy>
-    ```
-    ```
-    <span style="color:green">shell></span> <copy>sudo chown -R mysqluser:mysqlgrp /backupdir</copy>
-    ```
-    ```
-    <span style="color:green">shell></span> <copy>sudo chmod 770 -R /backupdir</copy>
+    <copy>ssh -i $HOME/sshkeys/id_rsa opc@<your_server_public_ip></copy>
     ```
 
-3. Create a user in <span style="color:red">mysql-advanced</span> with grants options for backup. 
-    To simplify user creations we have a script with minimal grants for this user (see the manual for additional privileges required for specific features like TTS, SBT integration, encrypted). You can also have a look on the privileges opening the file /workshop/support/mysqlbackup_user_grants.sql
+2. Create a directory where store our backups
 
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>mysqlsh admin@mysql1:3307</copy>
-    ```
-    ```
-    <span style="color:blue">mysql></span> <copy>CREATE USER 'mysqlbackup'@'%' IDENTIFIED BY 'Welcome1!';</copy>
-    ```
-    ```
-    <span style="color:blue">mysql></span> <copy>source /workshop/support/mysqlbackup_user_grants.sql;</copy>
-    ```
-    ```
-    <span style="color:blue">mysql></span> <copy>\q</copy>
+    <copy>mkdir -p /home/opc/backupdir/full</copy>
     ```
 
-4. Create a full backup 
+3. Using an administrative account for backup is not recommended for security, so we create now a dedicated user
+
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>mysqlbackup --port=3307 --host=127.0.0.1 --user=mysqlbackup --password --backup-dir=/backupdir/full backup-and-apply-log</copy>
+    <copy>mysqlsh admin@localhost</copy>
     ```
 
-5. Create a second backup with compression 
+    **![orange-dot](./images/orange-square.jpg) mysqlsh>**
     ```
-    <span style="color:green">shell></span> <copy>mysqlbackup --port=3307 --host=127.0.0.1 --user=mysqlbackup --password --backup-dir=/backupdir/compressed --compress backup-and-apply-log</copy>
+    <copy>CREATE USER 'mysqlbackup'@'%' IDENTIFIED BY 'Welcome1!';</copy>
     ```
 
-6. Have a look of the content of the backup folders
+4. Backup user requires specific grants, sometimes related to instances with specific features enabled (e.g. InnoDB Cluster).
+    Refer to the manual for details.
+    For the purposes of this workshop these are the minimal
+
+    **![orange-dot](./images/orange-square.jpg) mysqlsh>**
     ```
-    <span style="color:green">shell></span> <copy>cd /backupdir/full</copy>
+    <copy>
+    GRANT SELECT, BACKUP_ADMIN, RELOAD, PROCESS, SUPER, REPLICATION CLIENT ON *.* TO `mysqlbackup`@`%`;
+    GRANT CREATE, INSERT, DROP, UPDATE ON mysql.backup_progress TO 'mysqlbackup'@'%';
+    GRANT CREATE, INSERT, DROP, UPDATE, SELECT, ALTER ON mysql.backup_history TO 'mysqlbackup'@'%';
+    </copy>
     ```
+
+    **![orange-dot](./images/orange-square.jpg) mysqlsh>**
+    ```
+    <copy>\q</copy>
+    ```
+
+5. Create now a new login path **mysqlbackup** 
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>mysql_config_editor set --login-path=mysqlbackup --user=mysqlbackup --host=127.0.0.1 -p</copy>
+    ```
+
+6. We are now ready to create a full backup 
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>mysqlbackup --defaults-file=/etc/my.cnf --login-path=mysqlbackup --backup-dir=/home/opc/backupdir/full backup-and-apply-log</copy>
+    ```
+
+7. Have a look of the content of the backup folder
+
+    a. Go to the backup directory
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <span style="color:green">shell></span> <copy>cd /home/opc/backupdir/full</copy>
+    ```
+
+    b. Check the content of "full" directory. You will see a copy of the datadir and backup metadata (including a copy of the backup log), and the my.cnf files created by MySQL Enterprise Backup
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
     <span style="color:green">shell></span> <copy>ls -l</copy>
     ```
+
+    c. Check the content of backup "datadir" directory. You will see a copy of the original datadir, with renamed auto.cnf and mysqld-auto.cnf files
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>cd /backupdir/compressed</copy>
-    ```
-    ```
-    <span style="color:green">shell></span> <copy>ls -l</copy>
+    <span style="color:green">shell></span> <copy>ls -l datadir/</copy>
     ```
 
-7. Check the size of the two backups, the one uncompressed and the one compressed
-
+    d. Check the content of backup "meta" directory. You will see the backup metadata, including the log
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>cd /backupdir</copy>
-    ```
-    ```
-    <span style="color:green">shell></span> <copy>du -sh *</copy>
+    <span style="color:green">shell></span> <copy>ls -l meta/</copy>
     ```
 
+    e. Check the content of backup log.
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <span style="color:green">shell></span> <copy>cat meta/MEB_*.log</copy>
+    ```
 
 ## Task 2: Restore
-1.  Stop the server
+1.  Stop the server, to exclude unexpected behaviors from running processes
+
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>sudo systemctl stop mysqld-advanced</copy>
-    ```
-    
-2. (<span style="color:red">destroy time!</span>) Empty datadir before restore the instance
-    
-    ```
-    <span style="color:green">shell></span> <copy>sudo rm -rf /mysql/data/*</copy>
+    <copy>sudo systemctl stop mysqld</copy>
     ```
 
-3. Make a copy of existing binary logs and create a directory to store the new ones  
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>sudo mv /mysql/binlog/ /mysql/binlog.old/</copy>
-    ```
-    ```
-    <span style="color:green">shell></span> <copy>sudo mkdir /mysql/binlog</copy>
-    ```
-    ```
-    <span style="color:green">shell></span> <copy>sudo chown mysqluser:mysqlgrp /mysql/binlog</copy>
-    ```
-    ```
-    <span style="color:green">shell></span> <copy>sudo chmod -R 750 /mysql/binlog</copy>
+    <copy>sudo systemctl status mysqld</copy>
     ```
 
-4. Restore the backup 
-    We execute mysqlbackup as root because of permission in destination folders
+2. Empty the datadir (if you don't know where is the datadir, read the section [Useful SQL Statements](../mysql-shell/mysql-shell.md#task-3-useful-sql-statements))
+
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>sudo /mysql/mysql-latest/bin/mysqlbackup --defaults-file=/mysql/etc/my.cnf --backup-dir=/backupdir/full/ copy-back</copy>
+    </span> <copy>ls /var/lib/mysql/</copy>
     ```
 
-5. Rename backup-auto.cnf, backup-mysqld-auto.cnf
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>sudo mv /mysql/data/backup-auto.cnf /mysql/data/auto.cnf</copy>
-    ```
-    ```
-    <span style="color:green">shell></span> <copy>sudo mv /mysql/data/backup-mysqld-auto.cnf /mysql/data/mysqld-auto.cnf</copy>
+    </span> <copy>sudo rm -rf /var/lib/mysql/*</copy>
     ```
 
-6. Set the ownership and privileges
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>sudo chown -R mysqluser:mysqlgrp /mysql/data /mysql/binlog</copy>
-    ```
-    ```
-    <span style="color:green">shell></span> <copy>sudo chmod -R 750 /mysql/data /mysql/binlog</copy>
+    </span> <copy>sudo ls /var/lib/mysql/</copy>
     ```
 
-7. Start the server and verify the data
+3. Restore the backup. We use ***<code>sudo</code>*** because teh owner must be mysql (as opc user we have only read access)
 
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>sudo systemctl start mysqld-advanced</copy>
+    <copy>sudo mysqlbackup --defaults-file=/etc/my.cnf --backup-dir=/home/opc/backupdir/full/ copy-back</copy>
     ```
+
+    > NOTE: the "WARNING" is to rememebr that a restore on a different server than the original one may requires additional steps
+
+5. Before start the instance, usually rename the files backup-auto.cnf and backup-mysqld-auto.cnf (but check if it apply to your use case)
+
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:green">shell></span> <copy>mysqlsh admin@mysql1:3307</copy>
+    <copy>sudo mv /var/lib/mysql/backup-auto.cnf /var/lib/mysql/auto.cnf</copy>
     ```
+
+    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <span style="color:blue">mysql></span> <copy>SHOW DATABASES;</copy>
+    <copy>sudo mv /var/lib/mysql/backup-mysqld-auto.cnf /var/lib/mysql/mysqld-auto.cnf</copy>
     ```
-        
+
+6. We restored as root, so it's improtant to restore also the correct datadir ownership
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>sudo chown -R mysql:mysql /var/lib/mysql/</copy>
+    ```
+
+7. We are now ready to restart the server
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>sudo systemctl start mysqld</copy>
+    ```
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>sudo systemctl status mysqld</copy>
+    ```
+
+7. Verify that data are restored
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>mysqlsh admin@localhost --table -e "SHOW DATABASES;"</copy>
+    ```
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>mysqlsh admin@localhost --table -e "SELECT * FROM employees.employees limit 10;"</copy>
+    ```
+
+You may now **proceed to the next lab**
 
 ## Learn More
 * https://dev.mysql.com/doc/mysql-enterprise-backup/8.4/en/mysqlbackup.tasks.html
@@ -146,6 +211,6 @@ In this lab, you will:
 
 
 ## Acknowledgements
+
 * **Author** - Marco Carlessi, Principal Sales Consultant
-* **Contributors** -  Perside Foster, MySQL Solution Engineering, Selena Sánchez, MySQL Solutions Engineer
-* **Last Updated By/Date** - Selena Sánchez, MySQL Solution Engineering, May 2023
+* **Last Updated By/Date** - Marco Carlessi, MySQL Solution Engineering, January 2025

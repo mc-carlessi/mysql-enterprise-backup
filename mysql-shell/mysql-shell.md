@@ -11,7 +11,7 @@ Goal:
 - Practice with MySQL Shell
 - practice with mysql_config_editor
 
-Estimated Time: -- 10 minutes
+Estimated Time:  10 minutes
 
 ### Objectives
 
@@ -37,13 +37,13 @@ Pay attention to the prompt, to know where execute the commands
 * ![blue-dot](./images/blue-square.jpg) mysqlsh>  
   The command must be executed in MySQL shell python command mode
 
-## Task 1: MySQL Shell as a SQL Client
+## Task 1: MySQL Shell introduction
 
 1. If not already connected, connect to your mysql server
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>ssh -i $HOME/sshkeys/id_rsa_mysql1 opc@<your_server_public_ip></copy>
+    <copy>ssh -i $HOME/sshkeys/id_rsa opc@<your_server_public_ip></copy>
     ```
 
 2. MySQL shell offers various utilities, so it can be started without a connection to a MySQL server instance
@@ -83,19 +83,8 @@ Pay attention to the prompt, to know where execute the commands
     <copy>\option --persist history.autoSave=1</copy>
     ```
 
-7. Close and reopen the session and in the new one **uses the arrow up key** to verify that the data from previous session are available
 
-    **![orange-dot](./images/orange-square.jpg) mysqlsh>**
-    ```
-    <copy>\q</copy>
-    ```
-    
-    **![green-dot](./images/green-square.jpg) shell>**  
-    ```
-    <copy>mysqlsh</copy>
-    ```
-
-## Task 2: MySQL as a SQL Client
+## Task 2: MySQL as advanced SQL Client
 
 1. MySQL Shell can be used as SQL client.  
    Connect to the newly installed mysql-advanced instance. Enter the password when requested and press enter. 
@@ -104,7 +93,7 @@ Pay attention to the prompt, to know where execute the commands
 
     **![orange-dot](./images/orange-square.jpg) mysqlsh>**
     ```
-    <copy>\c admin@localhost</copy>
+    <copy>\c admin@127.0.0.1</copy>
     ```
 2. Now you can submit SQL commands
 
@@ -162,38 +151,6 @@ Pay attention to the prompt, to know where execute the commands
     **![orange-dot](./images/orange-square.jpg) mysqlsh>**
     ```
     <copy>\q</copy>
-    ```
-
-6. Command line connection from legacy MySQL Client and MySQL Shell are similar. Try these:
-
-    **![green-dot](./images/green-square.jpg) shell>**  
-    ```
-    <copy>mysql -u admin -p -h localhost</copy>
-    ```
-
-    **![orange-dot](./images/orange-square.jpg) mysql>**
-    ```
-    <copy>SHOW DATABASES;</copy>
-    ```
-
-    **![orange-dot](./images/orange-square.jpg) mysql>**
-    ```
-    <copy>exit</copy>
-    ```
-
-    **![green-dot](./images/green-square.jpg) shell>**  
-    ```
-    <copy>mysql -u admin -p -h localhost</copy>
-    ```
-
-    **![orange-dot](./images/orange-square.jpg) mysqlsh>**
-    ```
-    <copy>SHOW DATABASES;</copy>
-    ```
-
-    **![orange-dot](./images/orange-square.jpg) mysqlsh>**
-    ```
-    <copy>\exit</copy>
     ```
 
 ## Task 3: MySQL Connection with mysql\_config\_editor
@@ -255,26 +212,41 @@ Pay attention to the prompt, to know where execute the commands
     <copy>SELECT table_schema table_name, engine FROM INFORMATION_SCHEMA.TABLES where engine <> 'InnoDB' and table_schema not in ('mysql','information_schema', 'sys', 'performance_schema', 'mysql_innodb_cluster_metadata');</copy>
     ```
 
-4. You can check the amount of data inside all the databases  
+4. Check the amount of data inside all the databases  
 
     **![orange-dot](./images/orange-square.jpg) mysqlsh>**
     ```
     <copy>SELECT table_schema AS 'Schema', SUM( data_length ) / 1024 / 1024 AS 'Data MB', SUM( index_length ) / 1024 / 1024 AS 'Index MB', SUM( data_length + index_length ) / 1024 / 1024 AS 'Sum' FROM information_schema.tables GROUP BY table_schema ;</copy>
     ```
 
-5. You can check the amount of data inside all tables in a specific database ('employees' in the example)  
+5. Check the amount of data inside all tables in a specific database ('employees' in the example)  
 
     **![orange-dot](./images/orange-square.jpg) mysqlsh>**
     ```
     <copy>SELECT table_schema AS 'Schema', table_name, SUM( data_length ) / 1024 / 1024 AS 'Data MB', SUM( index_length ) / 1024 / 1024 AS 'Index MB', SUM( data_length + index_length ) / 1024 / 1024 AS 'Sum' FROM information_schema.tables WHERE table_schema='employees' GROUP BY table_name;</copy>
     ```
 
-6. You can check the size of tablespaces files for a specific database ('employees' in the example)  
+6. Check the size of tablespaces files for a specific database ('employees' in the example)  
 
     **![orange-dot](./images/orange-square.jpg) mysqlsh>**
     ```
-    <copy>SELECT name, space AS 'tablespace id', allocated_size /1024 /1024 AS 'size (MB)', encryption FROM innodb_tablespaces WHERE name LIKE 'employees/%';</copy>
+    <copy>SELECT name, space AS 'tablespace id', allocated_size /1024 /1024 AS 'size (MB)', encryption FROM information_schema.innodb_tablespaces WHERE name LIKE 'employees/%';</copy>
     ```
+
+7. Retrieve the datadir position
+
+    **![orange-dot](./images/orange-square.jpg) mysqlsh>**
+    ```
+    <copy>SELECT * FROM performance_schema.global_variables WHERE VARIABLE_NAME LIKE 'datadir';</copy>
+    ```
+
+8. Retrieve the my.cnf/my.ini configuration files position
+
+    **![orange-dot](./images/orange-square.jpg) mysqlsh>**
+    ```
+    <copy>SELECT DISTINCT (VARIABLE_PATH) FROM performance_schema.variables_info;</copy>
+    ```
+
 
 9. You can now exit from MySQL Shell and proceed to next lab
 
@@ -285,10 +257,10 @@ Pay attention to the prompt, to know where execute the commands
 
 ## Learn More
 
-* [MySQL Tutorial](https://dev.mysql.com/doc/en/tutorial.html)
+* [MySQL Shell manual](https://dev.mysql.com/doc/mysql-shell/8.4/en/)
 * [mysql\_config\_editor manual page](https://dev.mysql.com/doc/refman/8.4/en/mysql-config-editor.html)
 
 ## Acknowledgements
 
-- **Author** - Dale Dasker, MySQL Solution Engineering
-- **Last Updated By/Date** - Perside Foster, MySQL Solution Engineering, August 2024
+* **Author** - Marco Carlessi, Principal Sales Consultant
+* **Last Updated By/Date** - Marco Carlessi, MySQL Solution Engineering, January 2025

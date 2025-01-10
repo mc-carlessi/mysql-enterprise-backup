@@ -15,7 +15,6 @@ In this lab, you will:
 ### Prerequisites
 
 This lab assumes you have:
-
 - All previous labs successfully completed
 
 ### Lab standard
@@ -35,7 +34,7 @@ Pay attention to the prompt, to know where execute the commands
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>ssh -i $HOME/sshkeys/id_rsa_mysql1 opc@<your_server_public_ip></copy>
+    <copy>ssh -i $HOME/sshkeys/id_rsa opc@<your_server_public_ip></copy>
     ```
 
 2. Create the export folder
@@ -54,15 +53,16 @@ Pay attention to the prompt, to know where execute the commands
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>ls -l /mysql/exports/full.sql</copy>
+    <copy>ls -l /home/opc/exports/full.sql</copy>
     ```
 
 3. View the content of the file full.sql. 
-   Please note that "database:" in third line is empty, and first database exported is "mysql" 
+   Please note that "database:" in third line is empty, and first database exported is "mysql"
+   > Note:use CTRL + x to close nano editor without changes
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>nano /mysql/exports/full.sql</copy>
+    <copy>nano /home/opc/exports/full.sql</copy>
     ```
 
     ```sql
@@ -96,20 +96,21 @@ Pay attention to the prompt, to know where execute the commands
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>mysqldump --login-path=local_admin --single-transaction --set-gtid-purged=OFF --databases employees > /home/opc/employees_only.sql</copy>
+    <copy>mysqldump --login-path=local_admin --single-transaction --set-gtid-purged=OFF --databases employees > /home/opc/exports/employees_only.sql</copy>
     ```
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>ls -l /mysql/exports/employees_only.sql</copy>
+    <copy>ls -l /home/opc/exports/employees_only.sql</copy>
     ```
 
 5. View  the content of the file employees.sql.
    Please note that "database:" in third line is "employees" 
+   > Note:use CTRL + x to close nano editor without changes
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>nano /mysql/exports/full.sql</copy>
+    <copy>nano /home/opc/exports/full.sql</copy>
     ```
 
     ```sql
@@ -165,7 +166,7 @@ Pay attention to the prompt, to know where execute the commands
 
     **![orange-dot](./images/orange-square.jpg) mysql>**
     ```
-    <copy>SOURCE /home/opc/employees.sql</copy>
+    <copy>SOURCE /home/opc/exports/employees_only.sql</copy>
     ```
 
 3. Check that content is restored
@@ -192,13 +193,10 @@ Pay attention to the prompt, to know where execute the commands
     ```
     
 ## Learn More
-* https://dev.mysql.com/doc/refman/8.0/en/mysqldump.html
-* To use MySQL Shell at command line read: https://dev.mysql.com/doc/mysql-shell/8.0/en/command-line-integration-overview.html
-* https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-utilities-dump-instance-schema.html
-* https://dev.mysql.com/doc/mysql-shell/8.0/en/mysql-shell-utilities-load-dump.html
-
+* [MySQL Dump manual page](https://dev.mysql.com/doc/refman/8.0/en/mysqldump.html)
 
 ## Acknowledgements
+
 * **Author** - Marco Carlessi, Principal Sales Consultant
-* **Contributors** -  Perside Foster, MySQL Solution Engineering, Selena Sánchez, MySQL Solutions Engineer
-* **Last Updated By/Date** - Selena Sánchez, MySQL Solution Engineering, May 2023
+* **Last Updated By/Date** - Marco Carlessi, MySQL Solution Engineering, January 2025
+
