@@ -44,19 +44,33 @@ Pay attention to the prompt, to know where execute the commands
 
     a. Edit my.cnf
 
-        **![green-dot](./images/green-square.jpg) shell>**  
-        ```
-        <copy>sudo nano /etc/my.cnf</copy>
-        ```
-    b. Add these lines to my.cnf and save the file
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>sudo nano /etc/my.cnf</copy>
+    ```
+    b. Add these lines to my.cnf and save the file (CTRL o + CTRL X)
 
-    c. Restart the instance
+    ```
+    gtid_mode=on
+    enforce_gtid_consistency=on
+    ```
+
+    c. Restart the instance adn reviry that it's started
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>sudo systemctl restart mysqld</copy>
+    ```
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>sudo systemctl status mysqld</copy>
+    ```
 
 3. Create a directory where store our backups
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>sudo mkdir -p /home/opc/backupdir/full_pitr</copy>
+    <copy>mkdir -p /home/opc/backupdir/full_pitr</copy>
     ```
 
 4. We are now ready to create a full backup 
@@ -67,25 +81,161 @@ Pay attention to the prompt, to know where execute the commands
     <copy>mysqlbackup --defaults-file=/etc/my.cnf --login-path=mysqlbackup --backup-dir=/home/opc/backupdir/full_pitr backup-and-apply-log</copy>
     ```
 
-## Task 2: Execute some commands for the PiTR
+## Task 2: Execute some commands to test PiTR
 
+1. Connect with MySQL Shell 
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>mysqlsh admin@127.0.0.1</copy>
+    ```
+
+2. Create a table and add some records 
+
+    **![orange-dot](./images/orange-square.jpg) mysqlsh>**  
+    ```
+    <copy>CREATE DATABASE test;</copy>
+    ```
+
+    **![orange-dot](./images/orange-square.jpg) mysqlsh>**  
+    ```
+    <copy>USE test;</copy>
+    ```
+
+    **![orange-dot](./images/orange-square.jpg) mysqlsh>**  
+    ```
+    <copy>CREATE TABLE pets (id BIGINT UNSIGNED NOT NULL, pet varchar(50), primary key(id));</copy>
+    ```
+
+    **![orange-dot](./images/orange-square.jpg) mysqlsh>**  
+    ```
+    <copy>INSERT INTO pets VALUES(1,'dog'),(2,'cat'),(3,'bunny');</copy>
+    ```
+
+    **![orange-dot](./images/orange-square.jpg) mysqlsh>**  
+    ```
+    <copy>select * from pets;</copy>
+    ```
 
 ## Task 3: Save binary logs
 
+1. Check binary logs 
 
-## Task 3: Destroy teh instance and restore the backup
+    a. List existing binary logs
+
+    **![orange-dot](./images/orange-square.jpg) mysqlsh>**  
+    ```
+    <copy>SHOW BINARY LOGS;</copy>
+    ```
+
+    b. Force binary logs rotation
+
+    **![orange-dot](./images/orange-square.jpg) mysqlsh>**  
+    ```
+    <copy>SHOW BINARY LOGS;</copy>
+    ```
+
+    c. List existing binary logs
+
+    **![orange-dot](./images/orange-square.jpg) mysqlsh>**  
+    ```
+    <copy>SHOW BINARY LOGS;</copy>
+    ```
+
+    c. Check where binary logs are saved. From this qyery you can see the path ('/var/lib/mysql/') and the basename file ('binlog')
+
+    **![orange-dot](./images/orange-square.jpg) mysqlsh>**  
+    ```
+    <copy>SELECT @@log_bin_basename;</copy>
+    ```
+
+    D. Exit from MySQL Shell
+    **![orange-dot](./images/orange-square.jpg) mysqlsh>**  
+    ```
+    <copy>\q</copy>
+    ```
+
+2. Create a directory where store our binary logs
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>mkdir /home/opc/backupdir/binlogs</copy>
+    ```
+
+3. The file backup_variables.txt created by MySQL Enterprise Backup list backup positions.
+    We use it to save the binary logs created after the backup
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>cat /home/opc/backupdir/full_pitr/meta/backup_variables.txt</copy>
+    ```
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>grep binlog_position /home/opc/backupdir/full_pitr/meta/backup_variables.txt</copy>
+    ```
+
+4. To simplify next commands reading let's set some variables
+
+    a. Set basedir
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>basedir='/var/lib/mysql/'</copy>
+    ```
+
+    b. Set backup_variables.txt file
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>variables_file='/home/opc/backupdir/full_pitr/meta/backup_variables.txt'</copy>
+    ```
+
+    c. Set the directory where backup binary logs
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>destination_backup='/home/opc/backupdir/binlogs/'</copy>
+    ```
+
+5. Copy the binlog just retrieved in the binlog backup folder.
+    You can do it manually or use the command below.
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>cp "$datadir"/"$( grep binlog_position $variables_file | sed -e 's/^.*=//g' -e 's/\:.*$//g' )" $destination_backup</copy>
+    ```
+
+6. Copy all the binlogs created after that one 
+    You can do it manually or use the command below.
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>echo $( ls $datadir/binlog.[0-9]* ) | sed -e 's/^.*'$( grep binlog_position $variables_file | cut -d\= -f 2 | cut -d\: -f 1 )'//g#'</copy>
+    ```
+
+7. List the binary logs in our baclup directory
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>ls /home/opc/backupdir/binlogs</copy>
+    ```
+
+## Task 3: Destroy the instance and restore the backup
 1.  Stop the server, to exclude unexpected behaviors from running processes
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
     <copy>sudo systemctl stop mysqld</copy>
     ```
-    
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>sudo systemctl status mysqld</copy>
+    ```
+
 2. Empty the datadir (if you don't know where is the datadir, read the section [Useful SQL Statements](../mysql-shell/mysql-shell.md#task-3-useful-sql-statements))
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    </span> <copy>sudo ls -l /var/lib/mysql/*</copy>
+    </span> <copy>ls /var/lib/mysql/</copy>
     ```
 
     **![green-dot](./images/green-square.jpg) shell>**  
@@ -95,17 +245,17 @@ Pay attention to the prompt, to know where execute the commands
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    </span> <copy>sudo ls -l /var/lib/mysql/*</copy>
+    </span> <copy>ls /var/lib/mysql/</copy>
     ```
 
 3. Restore the backup. We use ***<code>sudo</code>*** because of ownership
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>sudo mysqlbackup --defaults-file=/etc/my.cnf --backup-dir=/home/opc/backupdir/full/ copy-back</copy>
+    <copy>sudo mysqlbackup --defaults-file=/etc/my.cnf --backup-dir=/home/opc/backupdir/full_pitr/ copy-back</copy>
     ```
 
-5. Before start the isntance, if needed, rename the files backup-auto.cnf and backup-mysqld-auto.cnf
+5. Before start the instance, if needed, rename the files backup-auto.cnf and backup-mysqld-auto.cnf
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
@@ -131,26 +281,88 @@ Pay attention to the prompt, to know where execute the commands
     <copy>sudo systemctl start mysqld</copy>
     ```
 
-7. Verify that data are restored
+7. Verify that data are restored. You will see that the new database test is not available (backup was taken before it's creation)
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>mysqlsh admin@localhost -e "SHOW DATABASES;"</copy>
+    <copy>mysqlsh admin@localhost --table -e "SHOW DATABASES"</copy>
     ```
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>mysqlsh admin@localhost -e "SELECT * FROM employees.employees limit 10;"</copy>
+    <copy>mysqlsh admin@localhost --table -e "SELECT * FROM employees.employees limit 10"</copy>
     ```
 
 ## Task 4: Execute the PiTR with binary logs
 
-You may now **proceed to the next lab**
+1. Move to the saved binary logs directory
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>cd /home/opc/backupdir/binlogs</copy>
+    ```
+
+2. List binary logs by name
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>ls -l</copy>
+    ```
+
+3. Inspect the content of the last binary log using mysqlbinlog utility (you can manually specify the name, or use the shell commands to retrieve the file for you).
+    This command displays row events encoded as base-64 strings (difficult to read for humans)  
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>mysqlbinlog $(ls | tail -1 )</copy>
+    ```
+
+4. Inspect the content of the last binary log in a human readable form.
+    See ![here](https://dev.mysql.com/doc/refman/8.4/en/mysqlbinlog-row-events.html) for mysqlbinlog output display options
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>mysqlbinlog --base64-output=DECODE-ROWS --verbose $(ls | tail -1 )</copy>
+    ```
+
+5. Retrieve the restored point of the backup in the binary logs from the backup_variables.txt file created during the restore process by MySQL Enterprise Backup.
+    To simplify our job, let's assign the value to a variable
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>grep binlog_position /var/lib/mysql/backup_variables.txt</copy>
+    ```
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>pos=$( grep binlog_position $variables_file | cut -d\= -f 2 | awk -F'[.]' 'NF>1 {print $NF}' | cut -d\: -f 2 )</copy>
+    ```
+
+6. Start the restore from that position (for the PiTR use mysql client and not MySQL Shell)
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>mysqlbinlog --start-position=$pos $destination_backup/*.[0-9]* | mysql --login-path=local_admin</copy>
+    ```
+
+7. Verify that data are restored
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>mysqlsh admin@localhost --table -e "SHOW DATABASES"</copy>
+    ```
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>mysqlsh admin@localhost --table -e "SELECT * FROM test.pets"</copy>
+    ```
+
+This **ends our workshop**
 
 ## Learn More
-* https://dev.mysql.com/doc/mysql-enterprise-backup/8.4/en/mysqlbackup.tasks.html
-* https://dev.mysql.com/doc/mysql-enterprise-backup/8.4/en/mysqlbackup.privileges.html
-
+* ![Point in Time Recovery](https://dev.mysql.com/doc/refman/8.4/en/point-in-time-recovery.html)
+* ![mysqlbinlog utility](https://dev.mysql.com/doc/refman/8.4/en/mysqlbinlog.html)
+* ![MySQL Enterprise Backup Point in Time Recovery](https://dev.mysql.com/doc/mysql-enterprise-backup/8.4/en/advanced.point.html)
 
 ## Acknowledgements
 

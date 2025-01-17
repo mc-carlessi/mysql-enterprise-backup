@@ -31,12 +31,12 @@
             "filename": "../../mysql-shell-dump_and_load/mysql-shell-dump_and_load.md"
         },
         {
-            "title": "Lab 5: MySQL Enterprise Backup and Restore (Full)",
+            "title": "Lab 5: MySQL Enterprise Backup and Restore",
             "description": "Security - MySQL Enterprise Transparent Data Encryption (TDE)",
             "filename": "../../enterprise-backup/enterprise-backup.md"
         },
         {
-            "title": "Lab 6: MySQL Enterprise Backup and Restore (some options)",
+            "title": "Lab 6: MySQL Enterprise Backup and Restore (options)",
             "description": "Security - MySQL Data Masking",
             "filename": "../../enterprise-backup-options/enterprise-backup-options.md"
         },

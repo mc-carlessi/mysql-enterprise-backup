@@ -195,12 +195,12 @@ Pay attention to the prompt, to know where execute the commands
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>mysqlsh admin@localhost --table -e "SHOW DATABASES;"</copy>
+    <copy>mysqlsh admin@localhost --table -e "SHOW DATABASES"</copy>
     ```
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>mysqlsh admin@localhost --table -e "SELECT * FROM employees.employees limit 10;"</copy>
+    <copy>mysqlsh admin@localhost --table -e "SELECT * FROM employees.employees limit 10"</copy>
     ```
 
 You may now **proceed to the next lab**
