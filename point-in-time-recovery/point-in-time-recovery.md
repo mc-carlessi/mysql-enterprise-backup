@@ -4,7 +4,7 @@
 Point-in-time recovery (PiTR) refers to recovery of data changes up to a given point in time. Typically, this type of recovery is performed after restoring a full backup that brings the server to its state as of the time the backup was made. 
 The full backup can be made in several ways (import from a mysqldump file, MySQL Shell load, MySQL Enterprise Backup restore).
 Binary logs are used to achieve a PiTR binary, apllying the, using the utility is mysqlbinlog, or better the MySQL Shell.
-To speed up the PITR process is also possible to use replica concepts, as explained in [KB 2009693.1](https://support.oracle.com/epmos/faces/DocumentDisplay?id=2009693.1) and [KB 2277457.1](https://support.oracle.com/epmos/faces/DocumentDisplay?id=2277457.1), both available on support website [https://support.oracle.com](https://support.oracle.com).
+To speed up the PiTR process is also possible to use replica concepts, as explained in [KB 2009693.1](https://support.oracle.com/epmos/faces/DocumentDisplay?id=2009693.1) and [KB 2277457.1](https://support.oracle.com/epmos/faces/DocumentDisplay?id=2277457.1), both available on support website [https://support.oracle.com](https://support.oracle.com).
 
 Estimated Lab Time: 15 minutes
 
@@ -98,7 +98,7 @@ Pay attention to the prompt, to know where execute the commands
     <copy>mkdir /home/opc/backupdir/binlogs</copy>
     ```
 
-5. The file backup\_variables.txt created by MySQL Enterprise Backup in 'meta' directory of the backup destination (/home/opc/backupdir/full_pitr/) contains many useful info about the backup execution.
+5. The file backup\_variables.txt created by MySQL Enterprise Backup in 'meta' directory of the backup destination (/home/opc/backupdir/full_PiTR/) contains many useful info about the backup execution.
 
     a. Have a look of the full content
 
@@ -247,7 +247,7 @@ Pay attention to the prompt, to know where execute the commands
     <copy>mysqlsh admin@localhost --table -e "SELECT * FROM employees.employees limit 10"</copy>
     ```
 
-## Task 5: Execute the PITR
+## Task 5: Execute the PiTR
 
 1. Connect with MySQL Shell 
 
