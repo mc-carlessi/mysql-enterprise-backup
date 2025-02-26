@@ -64,7 +64,7 @@ Pay attention to the prompt, to know where execute the commands
     <copy>sudo yum -y install *.rpm</copy>
     ```
 
-3. Now we install the MySQL Shell client You can see that the only packages are server and clients.
+3. Now we install the MySQL Shell client in version 9, that includes support for binary logs, for all the actually supported versions.
 
   **![green-dot](./images/green-square.jpg) shell>**  
       ```
@@ -77,17 +77,17 @@ Pay attention to the prompt, to know where execute the commands
 
  **![green-dot](./images/green-square.jpg) shell>** 
     ```
-    <copy>sudo yum -y install mysql-shell-commercial*.rpm</copy>
+    <copy>sudo yum -y install mysql-shell-commercial-9*.rpm</copy>
     ```
 
-5.	Start the mysql instance
+4.	Start the mysql instance
 
  **![green-dot](./images/green-square.jpg) shell>** 
     ```
     <copy>sudo systemctl start mysqld</copy>
     ```
 
-6.	Verify that process is running and listening on the default ports (3306 for MySQL standard protocol and 33060 for MySQL XDev protocol)
+5.	Verify that process is running and listening on the default ports (3306 for MySQL standard protocol and 33060 for MySQL XDev protocol)
 
   **![green-dot](./images/green-square.jpg) shell>** 
     ```
@@ -99,28 +99,30 @@ Pay attention to the prompt, to know where execute the commands
     <copy>netstat -an | grep 3306</copy>
     ```
 
-7.	Another way is searching the message “ready for connections” in error log as one of the last 
+6.	Another way is searching the message “ready for connections” in error log as one of the last 
 
   **![green-dot](./images/green-square.jpg) shell>** 
     ```
     <copy>sudo grep -i ready /var/log/mysqld.log</copy>
     ```
 
-8.	Retrieve root password for first login:
+## Task 2: Configure the instance and import a sample database
+
+1.	Retrieve root password for first login:
 
   **![green-dot](./images/green-square.jpg) shell>** 
     ```
     <copy>sudo grep -i 'temporary password' /var/log/mysqld.log</copy>
     ```
 
-9. Login to the the mysql-enterprise, change temporary password and check instance the status
+2. Login to the the mysql-enterprise, change temporary password and check instance the status
 
     **![green-dot](./images/green-square.jpg) shell>** 
      ```
     <copy>mysqlsh root@localhost</copy>
     ```
 
-10. Create New Password for MySQL Root
+3. Create New Password for MySQL root user, verify the connection and exit
 
  **![orange-dot](./images/orange-square.jpg) mysqlsh>**
     ```
@@ -132,9 +134,7 @@ Pay attention to the prompt, to know where execute the commands
     <copy>\status</copy>
     ```
 
-## Task 2: Create a new administrative user and import a sample database
-
-1.	Create a new administrative user called 'admin' with remote access and full privileges
+4.	Create a new administrative user called 'admin' with remote access
 
  **![orange-dot](./images/orange-square.jpg) mysqlsh>**
     ```
@@ -151,7 +151,7 @@ Pay attention to the prompt, to know where execute the commands
     <copy>\quit</copy>
     ```
 
-2.	Test the login of the new user (saving the password).
+5. Test the login of the new user (saving the password).
   MySQL Shell save the password in a secure file (mysql_config_editor is the default) and set history autosave
 
   **![green-dot](./images/green-square.jpg) shell>** 
@@ -164,7 +164,37 @@ Pay attention to the prompt, to know where execute the commands
     <copy>\quit</copy>
     ```
 
-3. Import the employees demo database that is in /workshop/databases folder.
+6. For complete backup activity we need binary logs, that are enabled by default from in MySQL 8.0.
+    Let's now enable the recommended to GTID mode, and set the minimal performance settings assuming a dedicated server to MySQL.
+
+    a. Edit my.cnf
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>sudo nano /etc/my.cnf</copy>
+    ```
+    b. Add these lines at the end of the my.cnf and save the file (CTRL o + CTRL X)
+
+    ```
+    <copy>
+    gtid_mode=on
+    enforce_gtid_consistency=on
+    innodb_dedicated_server=on
+    </copy>
+    ```
+
+    c. Restart the instance
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>sudo systemctl restart mysqld</copy>
+    ```
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>sudo systemctl status mysqld</copy>
+    ```
+
+7. Import the employees demo database that is in /workshop/databases folder.
 
   **![green-dot](./images/green-square.jpg) shell>** 
     ```

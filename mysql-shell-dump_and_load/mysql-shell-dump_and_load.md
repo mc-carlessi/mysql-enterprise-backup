@@ -37,9 +37,7 @@ Pay attention to the prompt, to know where execute the commands
   The command must be executed in MySQL shell javascript command mode
 
 
-
-## Task 1: MySQL Shell overview
-
+## Task 1: MySQL Shell dump
 1. If not already connected, connect to your mysql server
 
     **![green-dot](./images/green-square.jpg) shell>**  
@@ -54,8 +52,7 @@ Pay attention to the prompt, to know where execute the commands
     <copy>mysqlsh admin@127.0.0.1</copy>
     ```
 
-## Task 2: MySQL Shell dump
-1. Switch to javascript command mode to check the export the employee database.  
+3. Switch to javascript command mode  
     To ***just check*** if export parameters are correct, without execute the export, we can execute the command in dry-run mode
 
     **![orange-dot](./images/orange-square.jpg) mysqlsh>**  
@@ -63,18 +60,30 @@ Pay attention to the prompt, to know where execute the commands
     <copy>\js</copy>
     ```
 
+4. MySQL Shell has various utilities for dump. To list them type 'util.' adn press [tab] a couple of times
+
+    **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
+    ```
+    <copy>util.</copy> [TAB] [TAB]
+    ```
+
+5. Now test the export the employee database in dryRun mode.
+    You complete the 'util.' command just typed accordingly to below statement, or delete it and paste the full command
+
     **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
     <copy>util.dumpSchemas(['employees'],'/home/opc/exports/employees',{dryRun:true})</copy>
     ```
-2. If there are no errors, execute the export without dryRun.  
+
+6. If there are no errors, execute the export without dryRun.  
 
     **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
     <copy>util.dumpSchemas(['employees'],'/home/opc/exports/employees')</copy>
     ```
 
-3. Check the content of the directory /home/opc/exports/employees
+7. Check the content of the directory /home/opc/exports/employees.
+    YOu will see that instead of a single file, there are multiple files and the data are compressed
 
     **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
@@ -86,7 +95,7 @@ Pay attention to the prompt, to know where execute the commands
     <copy>ls -l /home/opc/exports/employees</copy>
     ```
 
-## Task 3: MySQL Shell load
+## Task 2: MySQL Shell load
 
 1. Reconnect mysqlsh and drop employees database
 
@@ -143,7 +152,7 @@ Pay attention to the prompt, to know where execute the commands
     <copy>\q</copy>
     ```
 
-## Task 4: MySQL Shell command line and comparison to mysqldump
+## Task 3: MySQL Shell command line and comparison to mysqldump
 
 1. MySQL Shell can be executed also at command line (useful for scripting) with "<code>mysqlsh [options] -- shell_object
 object_method [method_arguments]</code>"
@@ -186,6 +195,11 @@ object_method [method_arguments]</code>"
     <copy>mysqlsh admin@localhost -- util loadDump '/home/opc/exports/employees_shell_time'</copy>
     ```
 
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
+    <copy>mysqlsh admin@127.0.0.1 --table -e "SHOW DATABASES"</copy>
+    ```
+
 6. Drop the employees database  
 
     **![green-dot](./images/green-square.jpg) shell>**  
@@ -206,9 +220,8 @@ object_method [method_arguments]</code>"
     <copy>time mysql --login-path=local_admin < /home/opc/exports/employees_mysqldump_time.sql</copy>
     ```
 
-    **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>mysql --login-path=local_admin -e "show databases"</copy>
+    <copy>mysqlsh admin@127.0.0.1 --table -e "SHOW DATABASES"</copy>
     ```
 
 You may now **proceed to the next lab**

@@ -49,7 +49,7 @@ Pay attention to the prompt, to know where execute the commands
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>mysqlsh admin@localhost</copy>
+    <copy>mysqlsh admin@127.0.0.1</copy>
     ```
 
     **![orange-dot](./images/orange-square.jpg) mysqlsh>**
@@ -92,30 +92,35 @@ Pay attention to the prompt, to know where execute the commands
 7. Have a look of the content of the backup folder
 
     a. Go to the backup directory
+
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
     <span style="color:green">shell></span> <copy>cd /home/opc/backupdir/full</copy>
     ```
 
     b. Check the content of "full" directory. You will see a copy of the datadir and backup metadata (including a copy of the backup log), and the my.cnf files created by MySQL Enterprise Backup
+
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
     <span style="color:green">shell></span> <copy>ls -l</copy>
     ```
 
     c. Check the content of backup "datadir" directory. You will see a copy of the original datadir, with renamed auto.cnf and mysqld-auto.cnf files
+
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
     <span style="color:green">shell></span> <copy>ls -l datadir/</copy>
     ```
 
     d. Check the content of backup "meta" directory. You will see the backup metadata, including the log
+
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
     <span style="color:green">shell></span> <copy>ls -l meta/</copy>
     ```
 
     e. Check the content of backup log.
+
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
     <span style="color:green">shell></span> <copy>cat meta/MEB_*.log</copy>
@@ -158,7 +163,7 @@ Pay attention to the prompt, to know where execute the commands
     <copy>sudo mysqlbackup --defaults-file=/etc/my.cnf --backup-dir=/home/opc/backupdir/full/ copy-back</copy>
     ```
 
-    > NOTE: the "WARNING" is to rememebr that a restore on a different server than the original one may requires additional steps
+    > NOTE: the "WARNING" is to remember that a restore on a different server than the original one may requires additional steps
 
 5. Before start the instance, usually rename the files backup-auto.cnf and backup-mysqld-auto.cnf (but check if it apply to your use case)
 
@@ -195,12 +200,12 @@ Pay attention to the prompt, to know where execute the commands
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>mysqlsh admin@localhost --table -e "SHOW DATABASES"</copy>
+    <copy>mysqlsh admin@127.0.0.1 --table -e "SHOW DATABASES"</copy>
     ```
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>mysqlsh admin@localhost --table -e "SELECT * FROM employees.employees limit 10"</copy>
+    <copy>mysqlsh admin@127.0.0.1 --table -e "SELECT * FROM employees.employees limit 10"</copy>
     ```
 
 You may now **proceed to the next lab**

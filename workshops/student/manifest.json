@@ -21,7 +21,7 @@
             "filename": "../../mysql-shell/mysql-shell.md"
         },
         {
-            "title": "Lab 3: Logical Backup and Restore with mysql dump",
+            "title": "Lab 3: Logical Backup and Restore with mysqldump",
             "description": "Security - MySQL Users",
             "filename": "../../mysqldump/mysqldump.md"
         },
@@ -45,7 +45,11 @@
             "description": "Security - MySQL Firewall",
             "filename": "../../point-in-time-recovery/point-in-time-recovery.md"
         },
-
+        {
+            "title": "Lab 8: MySQL Point in Time Recovery - Advanced",
+            "description": "Security - MySQL Firewall",
+            "filename": "../../point-in-time-recovery/point-in-time-recovery-advanced.md"
+        },
         {
             "title": "Need Help?",
             "description": "Solutions to Common Problems and Directions for Receiving Live Help",

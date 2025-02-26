@@ -41,6 +41,11 @@ Pay attention to the prompt, to know where execute the commands
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
+    <copy>cd /home/opc/</copy>
+    ```
+
+    **![green-dot](./images/green-square.jpg) shell>**  
+    ```
     <copy>mkdir -p /home/opc/exports</copy>
     ```
 
@@ -60,37 +65,36 @@ Pay attention to the prompt, to know where execute the commands
    Please note that "database:" in third line is empty, and first database exported is "mysql"
    > Note:use CTRL + x to close nano editor without changes
 
-    **![green-dot](./images/green-square.jpg) shell>**  
-    ```
-    <copy>nano /home/opc/exports/full.sql</copy>
-    ```
+   **![green-dot](./images/green-square.jpg) shell>**  
+   ```
+   <copy>nano /home/opc/exports/full.sql</copy>
+   ```
 
-    ```sql
-    -- MySQL dump 10.13  Distrib 8.4.3, for Win64 (x86_64)
-    --
-    -- Host: localhost    Database: 
-    -- ------------------------------------------------------
-    -- Server version	8.4.3-commercial
-
+   ```sql
+   -- MySQL dump 10.13  Distrib 8.4.3, for Win64 (x86_64)
+   --
+   -- Host: localhost    Database: 
+   -- ------------------------------------------------------
+   -- Server version	8.4.3-commercial
     /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-    /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-    /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-    /*!50503 SET NAMES utf8mb4 */;
-    /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-    /*!40103 SET TIME_ZONE='+00:00' */;
-    /*!50606 SET @OLD_INNODB_STATS_AUTO_RECALC=@@INNODB_STATS_AUTO_RECALC */;
-    /*!50606 SET GLOBAL INNODB_STATS_AUTO_RECALC=OFF */;
-    /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-    /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-    /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-    /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+   /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+   /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+   /*!50503 SET NAMES utf8mb4 */;
+   /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+   /*!40103 SET TIME_ZONE='+00:00' */;
+   /*!50606 SET @OLD_INNODB_STATS_AUTO_RECALC=@@INNODB_STATS_AUTO_RECALC */;
+   /*!50606 SET GLOBAL INNODB_STATS_AUTO_RECALC=OFF */;
+   /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+   /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+   /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+   /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-    --
-    -- Current Database: `mysql`
-    --
+   --
+   -- Current Database: `mysql`
+   --
 
-    CREATE DATABASE /*!32312 IF NOT EXISTS*/ `mysql` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-    ```
+   CREATE DATABASE /*!32312 IF NOT EXISTS*/ `mysql` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+   ```
 
 4. Export a specific database (employees)
 
@@ -108,32 +112,32 @@ Pay attention to the prompt, to know where execute the commands
    Please note that "database:" in third line is "employees" 
    > Note:use CTRL + x to close nano editor without changes
 
-    **![green-dot](./images/green-square.jpg) shell>**  
-    ```
-    <copy>nano /home/opc/exports/full.sql</copy>
-    ```
+   **![green-dot](./images/green-square.jpg) shell>**  
+   ```
+   <copy>nano /home/opc/exports/full.sql</copy>
+   ```
 
-    ```sql
-    -- MySQL dump 10.13  Distrib 8.4.3, for Win64 (x86_64)
-    --
-    -- Host: localhost    Database: employees
-    -- ------------------------------------------------------
-    -- Server version	8.4.3-commercial
+   ```sql
+   -- MySQL dump 10.13  Distrib 8.4.3, for Win64 (x86_64)
+   --
+   -- Host: localhost    Database: employees
+   -- ------------------------------------------------------
+   -- Server version	8.4.3-commercial
 
-    /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-    /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-    /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-    /*!50503 SET NAMES utf8mb4 */;
-    /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-    /*!40103 SET TIME_ZONE='+00:00' */;
-    /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-    /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-    /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-    /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+   /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+   /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+   /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+   /*!50503 SET NAMES utf8mb4 */;
+   /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+   /*!40103 SET TIME_ZONE='+00:00' */;
+   /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+   /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+   /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+   /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-    --
-    -- Current Database: `employees`
-    --
+   --
+   -- Current Database: `employees`
+   --
 
     CREATE DATABASE /*!32312 IF NOT EXISTS*/ `employees` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
     ```
