@@ -114,7 +114,7 @@ Pay attention to the prompt, to know where execute the commands
 
    **![green-dot](./images/green-square.jpg) shell>**  
    ```
-   <copy>nano /home/opc/exports/full.sql</copy>
+   <copy>nano /home/opc/exports/employees_only.sql</copy>
    ```
 
    ```sql

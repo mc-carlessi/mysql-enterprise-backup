@@ -157,7 +157,7 @@ Pay attention to the prompt, to know where execute the commands
     <copy>mysql_config_editor print --all</copy>
     ```
 
-## Task 3: Useful SQL Statements
+## Task 4: Useful SQL Statements
 
 1. Connect to your instance
 

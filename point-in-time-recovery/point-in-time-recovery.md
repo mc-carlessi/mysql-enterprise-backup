@@ -172,7 +172,7 @@ Pay attention to the prompt, to know where execute the commands
     <copy>ls -l /home/opc/backupdir/binlogs/*</copy>
     ```
 
-## Task 4: Destroy the instance and restore the backup
+## Task 3: Destroy the instance and restore the backup
 1.  Stop the server, to exclude unexpected behaviors from running processes
 
     **![green-dot](./images/green-square.jpg) shell>**  
@@ -247,7 +247,7 @@ Pay attention to the prompt, to know where execute the commands
     <copy>mysqlsh admin@localhost --table -e "SELECT * FROM employees.employees limit 10"</copy>
     ```
 
-## Task 5: Execute the PiTR
+## Task 4: Execute the PiTR
 
 1. Connect with MySQL Shell 
 
