@@ -49,7 +49,12 @@ Pay attention to the prompt, to know where execute the commands
     <copy>mkdir -p /home/opc/exports</copy>
     ```
 
-3. Export all the data with mysqldump. We use here the ***login_path*** to authenticate, easier than specify ***<code>"-u <user> -h <host> -p"</code>***
+3. Export all the data with mysqldump. We use here 
+    * --login-path=local_admin, to authenticate, easier than specify ***<code>"-u <user> -h <host> -p"</code>***
+    * --single-transaction, to have a consistent backup
+    * --events, --routines, that mysqldump doesn't export by default
+    * --flush-logs, to force log rotation and simplify binary logs copy and potentially PiTR
+    * --all-databases, because it's a full dump
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```

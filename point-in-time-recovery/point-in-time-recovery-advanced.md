@@ -106,7 +106,7 @@ Pay attention to the prompt, to know where execute the commands
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>mkdir /home/opc/backupdir/binlogs2</copy>
+    <copy>mkdir /home/opc/backupdir/binlogs</copy>
     ```
 
 3. The file backup\_variables.txt created by MySQL Enterprise Backup in 'meta' directory of the backup destination (/home/opc/backupdir/full_PiTR/) contains many useful info about the backup execution.
@@ -145,14 +145,14 @@ Pay attention to the prompt, to know where execute the commands
 
     **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
-    <copy>util.dumpBinlogs('/home/opc/backupdir/binlogs2/',{startFrom:'...',dryRun:true})</copy>
+    <copy>util.dumpBinlogs('/home/opc/backupdir/binlogs/',{startFrom:'...',dryRun:true})</copy>
     ```
 
     d. If there are no errors, repeat above command with dryRun=false
 
     **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
-    <copy>util.dumpBinlogs('/home/opc/backupdir/binlogs2/',{startFrom:'...',dryRun:false})</copy>
+    <copy>util.dumpBinlogs('/home/opc/backupdir/binlogs/',{startFrom:'...',dryRun:false})</copy>
     ```
 
 5. Now we can check what we saved.
@@ -168,19 +168,19 @@ Pay attention to the prompt, to know where execute the commands
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>ls -l /home/opc/backupdir/binlogs2</copy>
+    <copy>ls -l /home/opc/backupdir/binlogs</copy>
     ```
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>cat /home/opc/backupdir/binlogs2/@.binlog.info.json</copy>
+    <copy>cat /home/opc/backupdir/binlogs/@.binlog.info.json</copy>
     ```
 
     c. inside the sub-directory there are the binlog compressed, each one with a json file that describe the content
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>ls -l /home/opc/backupdir/binlogs2/*</copy>
+    <copy>ls -l /home/opc/backupdir/binlogs/*</copy>
     ```
 
 ## Task 3: Identify the wrong command position in the binary logs
@@ -360,14 +360,14 @@ Pay attention to the prompt, to know where execute the commands
 
     **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
-    <copy>util.loadBinlogs('/home/opc/backupdir/binlogs2/',{stopBefore:'...',dryRun:true})</copy>
+    <copy>util.loadBinlogs('/home/opc/backupdir/binlogs/',{stopBefore:'...',dryRun:true})</copy>
     ```
 
 4. If there are no errors, execute hte load with dryRun:false
 
     **![yellow-dot](./images/yellow-square.jpg) mysqlsh>**  
     ```
-    <copy>util.loadBinlogs('/home/opc/backupdir/binlogs2/',{stopBefore:'...',dryRun:false})</copy>
+    <copy>util.loadBinlogs('/home/opc/backupdir/binlogs/',{stopBefore:'...',dryRun:false})</copy>
     ```
 
 5. Now check that the data within test database are restored

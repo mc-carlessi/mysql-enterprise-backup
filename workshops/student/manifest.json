@@ -43,11 +43,6 @@
         {
             "title": "Lab 7: MySQL Point in Time Recovery",
             "description": "Security - MySQL Firewall",
-            "filename": "../../point-in-time-recovery/point-in-time-recovery.md"
-        },
-        {
-            "title": "Lab 8: MySQL Point in Time Recovery - Advanced",
-            "description": "Security - MySQL Firewall",
             "filename": "../../point-in-time-recovery/point-in-time-recovery-advanced.md"
         },
         {

@@ -91,7 +91,7 @@ Pay attention to the prompt, to know where execute the commands
 
   **![green-dot](./images/green-square.jpg) shell>** 
     ```
-    <copy>ps -ef | grep mysqld</copy>
+    <copy>sudo systemctl status mysqld</copy>
     ```
 
   **![green-dot](./images/green-square.jpg) shell>** 
