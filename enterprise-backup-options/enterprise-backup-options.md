@@ -134,12 +134,12 @@ Pay attention to the prompt, to know where execute the commands
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>mysqlsh admin@localhost -e "CREATE TABLE test.mytab (id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, val VARCHAR(10), PRIMARY KEY(id))"</copy>
+    <copy>mysqlsh admin@localhost -e "CREATE TABLE test.mytab (id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, name VARCHAR(50), PRIMARY KEY(id))"</copy>
     ```
 
     **![green-dot](./images/green-square.jpg) shell>**  
     ```
-    <copy>mysqlsh admin@localhost -e "INSERT INTO test.mytab(val) VALUES('a'),('b'),('c')"</copy>
+    <copy>mysqlsh admin@localhost -e "INSERT INTO test.mytab(name) VALUES('Amanda'),('Mark')"</copy>
     ```
 
 3. Empty temporary directory

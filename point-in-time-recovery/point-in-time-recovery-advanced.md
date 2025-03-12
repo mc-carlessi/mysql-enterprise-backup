@@ -63,21 +63,16 @@ Pay attention to the prompt, to know where execute the commands
     <copy>SHOW BINARY LOGS;</copy>
     ```
 
-3. Create a table and add some records 
+3. Let's add some new records to test.mytab table 
 
     **![orange-dot](./images/orange-square.jpg) mysqlsh>**  
     ```
-    <copy>USE test;</copy>
-    ```
-
-    **![orange-dot](./images/orange-square.jpg) mysqlsh>**  
-    ```
-    <copy>INSERT INTO mytab VALUES(1,'Amanda'),(2,'Mark'),(3,'Viktor'),(4,'Sofia');</copy>
+    <copy>INSERT INTO test.mytab(name) VALUES('Viktor'),('Sofia');</copy>
     ```
 
     **![orange-dot](./images/orange-square.jpg) mysqlsh>**  
     ```
-    <copy>SELECT * FROM mytab;</copy>
+    <copy>SELECT * FROM test.mytab;</copy>
     ```
 
 4. ***Now we do a mistake!*** Instead of delete a single record, delete the full content of the pets table forgetting to specify a WHERE condition.
@@ -85,12 +80,12 @@ Pay attention to the prompt, to know where execute the commands
 
     **![orange-dot](./images/orange-square.jpg) mysqlsh>**  
     ```
-    <copy>DELETE FROM mytab;</copy>
+    <copy>DELETE FROM test.mytab;</copy>
     ```
 
     **![orange-dot](./images/orange-square.jpg) mysqlsh>**  
     ```
-    <copy>select * from mytab;</copy>
+    <copy>SELECT * FROM test.mytab;</copy>
     ```
 
 ## Task 2: Save binary logs
